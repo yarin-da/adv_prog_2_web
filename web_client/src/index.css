@@ -1,0 +1,50 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+html {
+  background-color: #232323;
+}
+
+.MainApp {
+  width: auto;
+  height: auto;
+}
+
+.SidePanel {
+  background-color: #334455;
+  height: 100%;
+  width: 250px;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  overflow-x: hidden;
+}
+
+.GraphPanel {
+  background-color: #486078;
+  width: auto;
+  height: 50%;
+}
+
+.TablePanel {
+  background-color: #5d7c9b;
+  width: auto;
+  height: 50%;
+}
+
+.Title {
+  color: white;
+  text-align: center;
+  font-size: x-large;
+}
