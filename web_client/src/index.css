@@ -16,11 +16,6 @@ html {
   background-color: #232323;
 }
 
-.MainApp {
-  width: auto;
-  height: auto;
-}
-
 .SidePanel {
   background-color: #334455;
   height: 100%;
@@ -33,18 +28,19 @@ html {
 
 .GraphPanel {
   background-color: #486078;
-  width: auto;
-  height: 50%;
 }
 
 .TablePanel {
   background-color: #5d7c9b;
-  width: auto;
-  height: 50%;
 }
 
 .Title {
   color: white;
   text-align: center;
   font-size: x-large;
+}
+
+.Dropzone {
+  justify-self: center;
+  margin: 10px
 }
