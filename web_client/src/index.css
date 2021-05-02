@@ -21,6 +21,11 @@ html {
   grid-template-columns: minmax(250px, 20%) 1fr;
 }
 
+.DataPanel {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+}
+
 .SidePanel {
   background-color: #334455;
   height: 100%;
@@ -28,11 +33,11 @@ html {
 }
 
 .GraphPanel {
-  background-color: #486078;
+  background-color: #0a1a2a;
 }
 
 .TablePanel {
-  background-color: #5d7c9b;
+  background-color: #486078;
 }
 
 .Title {

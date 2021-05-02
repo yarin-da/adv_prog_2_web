@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { DataGrid } from "@material-ui/data-grid";
 
 // a data table for all the values in 'data'
-const DataTable = ({data}) => {
+const DataTable = ({headers, data}) => {
   // update columns and rows whenever 'data' updates
   const rows = useMemo(() => {
     return data;
@@ -11,18 +11,17 @@ const DataTable = ({data}) => {
     // make sure there's data
     if (data == null || data[0] == null) { return [] }
     // run through the keys to initialize all columns with default values
-    const keys = Object.keys(data[0]);
-    return keys.map((key) => {
+    return headers.map((header) => {
       return {
-        field: key,
-        headerName: key,
+        field: header,
+        headerName: header,
         sortable: false,
         width: 120,
       }
     });
-  }, [data]);
+  }, [data, headers]);
   return (
-    <div style={{ height: 400 }}>
+    <div className="TablePanel">
       <DataGrid rows={rows} columns={columns} pageSize={100} />
     </div>
   );
