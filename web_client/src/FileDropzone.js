@@ -7,10 +7,10 @@ const baseStyle = {
   flexDirection: 'column',
   alignItems: 'center',
   padding: '20px',
-  borderWidth: 3,
+  borderWidth: 2,
   borderRadius: 5,
-  borderColor: '#eeeeee',
-  borderStyle: 'dashed',
+  borderColor: '#dddddd',
+  borderStyle: 'solid',
   backgroundColor: '#fafafa',
   color: '#acacac',
   outline: 'none',
@@ -31,8 +31,8 @@ const rejectStyle = {
 
 function FileDropzone({text, type, onFileChosen}) {
   const onDrop = useCallback(acceptedFiles => {
-    onFileChosen(acceptedFiles[0]["path"]);
-  }, []);
+    onFileChosen(acceptedFiles[0]);
+  }, [onFileChosen]);
 
   const {
     getRootProps,
@@ -40,7 +40,7 @@ function FileDropzone({text, type, onFileChosen}) {
     isDragActive,
     isDragAccept,
     isDragReject
-  } = useDropzone({onDrop, accept: type}); // TODO: accept only csv
+  } = useDropzone({onDrop, accept: type, maxFiles: 1});
 
   const style = useMemo(() => ({
     ...baseStyle,
