@@ -1,5 +1,6 @@
 import React, {useCallback, useMemo} from "react";
 import {useDropzone} from "react-dropzone";
+import "./FileDropzone.css";
 
 const baseStyle = {
   flex: 1,
@@ -29,7 +30,7 @@ const rejectStyle = {
   borderColor: '#ff1744'
 };
 
-function FileDropzone({text, type, onFileChosen}) {
+const FileDropzone = ({text, type, onFileChosen}) => {
   const onDrop = useCallback(acceptedFiles => {
     onFileChosen(acceptedFiles[0]);
   }, [onFileChosen]);

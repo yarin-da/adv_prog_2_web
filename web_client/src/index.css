@@ -18,12 +18,16 @@ html {
 
 .MainPage {
   display: grid;
-  grid-template-columns: minmax(250px, 20%) 1fr;
+  grid-template-columns: 250px 1px 1fr;
+}
+
+.Divider {
+  background-color: #607f9f;
 }
 
 .DataPanel {
   display: grid;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 60vh 40vh;
 }
 
 .SidePanel {
@@ -37,16 +41,35 @@ html {
 }
 
 .TablePanel {
-  background-color: #486078;
+  padding: 0px;
 }
 
-.Title {
-  color: white;
-  text-align: center;
-  font-size: x-large;
+/* icon */
+.Icon {
+  margin: 0 auto;
+  width: 37%;
+  background-color: #232323;
+  border-radius: 30%;
+  border: solid #607f9f 3px;
 }
 
-.Dropzone {
-  justify-self: center;
-  margin: 10px
+.IconArea {
+  background-color: #334455;
+  border-bottom: solid #607f9f 1px;
+  padding: 5px;
+  height: 100px;
+}
+
+/* animations */
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+
+.rotate {
+  animation: rotation 30s infinite linear;
 }

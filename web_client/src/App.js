@@ -1,33 +1,47 @@
-import CsvDropzone from "./CsvDropzone";
-import DataTable from "./DataTable";
 import {useState} from "react";
-import LineChart from "./LineChart";
+import CsvDropzone from "./components/CsvDropzone";
+import DataTable from "./components/DataTable";
+import LineChart from "./components/LineChart";
+import SelectList from "./components/SelectList";
+import AirPlaneIcon from "./resources/airplane_icon.png";
 
 // main app
 const App = () => {
-  // TODO: change this! <-- currently works for single csv file uploaded
-  // stores the json data of the last csv file that was uploaded
-  const [data, setData] = useState([]);
-  const [headers, setHeaders] = useState([]);
+  //const [models, setModels] = useState([]);
+  //const [anomalies, setAnomalies] = useState([]);
+  
+  // live flight data to detect anomalies
+  const [detectData, setDetectData] = useState([]);
+  // training data 
+  const [trainData, setTrainData] = useState([]);
   // updates the data once everything has been parsed to json
-  const onDataChanged = (jsonData) => {
-    setData(jsonData);
-    setHeaders(Object.keys(jsonData[0]));
+  const onTrainDataChanged = (jsonData) => {
+    setTrainData(jsonData);
   };
-
+  const onDetectDataChanged = (jsonData) => {
+    setDetectData(jsonData);
+  }
+  
   return (
     <div className="MainPage">
       <div className="SidePanel">
+        <div className="IconArea">
+          <div className="Icon">
+            <img src={AirPlaneIcon} alt="airplane" width="100%" />
+          </div>
+        </div>
+        <SelectList />
         <CsvDropzone 
-          onDataChanged={onDataChanged}
-          text="Drop a training data file" />
-        <CsvDropzone 
-          onDataChanged={onDataChanged}
+          onDataChanged={onDetectDataChanged}
           text="Drop a flight data file" />
+        <CsvDropzone 
+          onDataChanged={onTrainDataChanged}
+          text="Drop a training data file" />
       </div>
+      <div className="Divider" />
       <div className="DataPanel">
-        <LineChart headers={headers} data={data} />
-        <DataTable headers={headers} data={data} />
+        <LineChart data={detectData} />
+        <DataTable data={detectData} />
       </div>
     </div>
   );
