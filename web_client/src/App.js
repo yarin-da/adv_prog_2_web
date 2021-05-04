@@ -3,6 +3,7 @@ import CsvDropzone from "./components/CsvDropzone";
 import DataTable from "./components/DataTable";
 import LineChart from "./components/LineChart";
 import SelectList from "./components/SelectList";
+import ServerTester from "./components/ServerTester";
 import AirPlaneIcon from "./resources/airplane_icon.png";
 
 // main app
@@ -31,6 +32,7 @@ const App = () => {
           </div>
         </div>
         <SelectList />
+        <ServerTester />
         <CsvDropzone 
           onDataChanged={onDetectDataChanged}
           text="Drop a flight data file" />
