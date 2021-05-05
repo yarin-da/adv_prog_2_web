@@ -1,19 +1,24 @@
-import SearchIcon from "../resources/search_icon.png";
+import TextField from "@material-ui/core/TextField";
+import SearchIcon from '@material-ui/icons/Search';
+import InputAdornment from "@material-ui/core/InputAdornment";
 import "./SearchBar.css";
 
 const SearchBar = ({onSearchChanged}) => {
   return (
-    <div className="SearchBar">
-      <div style={{padding: "5px"}}>
-        <img src={SearchIcon} alt="icon" width="30px" height="30px"/>
-      </div>
-      <input 
-        className="SearchInput"
-        placeholder="search here!" 
-        onChange={
-          (event) => { onSearchChanged(event.target.value) }
-        } />
-    </div>
+    <TextField 
+      color="primary"
+      variant="outlined" 
+      size="small"
+      onChange={(event) => {onSearchChanged(event.target.value)}}
+      placeholder="Search"
+      fullWidth
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <SearchIcon/>
+          </InputAdornment>
+        ),
+      }}/>
   );
 }
 

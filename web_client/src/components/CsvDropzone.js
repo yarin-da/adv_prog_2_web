@@ -2,7 +2,7 @@ import FileDropzone from "./FileDropzone";
 import csvToJson from "csvtojson";
 
 // a wrapper for FileDropzone
-// loads only csv files and parse them to json
+// loads only csv files and parses them to json
 const CsvDropzone = ({text, onDataChanged}) => {
   const csvType = ".csv, application/vnd.ms-excel, text/csv";
 
@@ -19,9 +19,10 @@ const CsvDropzone = ({text, onDataChanged}) => {
       csvToJson()
         .fromString(contents)
         .subscribe((line) => {
-          // append a new line to data
           // add a unique id (counter) to that line
-          data = [...data, { id: counter, ...line }]
+          const newLine = { id: counter, ...line};
+          // append a new line to data
+          data = [...data, newLine];
           counter++;
         }, null, () => {
           // finally, notify the parent that new data has arrived
@@ -33,9 +34,9 @@ const CsvDropzone = ({text, onDataChanged}) => {
 
   return (
     <FileDropzone 
-          text={text} 
-          type={csvType} 
-          onFileChosen={onFileLoad}/>
+      text={text} 
+      type={csvType} 
+      onFileChosen={onFileLoad} />
   );
 }
 

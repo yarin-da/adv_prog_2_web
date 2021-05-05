@@ -1,4 +1,5 @@
-import React, {useCallback, useMemo} from "react";
+import {Typography} from "@material-ui/core";
+import {useMemo, useCallback} from "react";
 import {useDropzone} from "react-dropzone";
 import "./FileDropzone.css";
 
@@ -7,7 +8,7 @@ const baseStyle = {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  padding: '20px',
+  padding: '25px',
   borderWidth: 2,
   borderRadius: 5,
   borderColor: '#dddddd',
@@ -19,35 +20,45 @@ const baseStyle = {
 };
 
 const activeStyle = {
-  borderColor: '#2196f3'
+  backgroundColor: 'lightgray',
+  color: 'black',
 };
 
 const acceptStyle = {
-  borderColor: '#00e676'
+  backgroundColor: 'lightgreen',
+  color: 'black',
 };
 
 const rejectStyle = {
-  borderColor: '#ff1744'
+  backgroundColor: 'lightcoral',
+  color: 'black',
 };
 
 const FileDropzone = ({text, type, onFileChosen}) => {
-  const onDrop = useCallback(acceptedFiles => {
-    onFileChosen(acceptedFiles[0]);
-  }, [onFileChosen]);
-
   const {
     getRootProps,
     getInputProps,
     isDragActive,
     isDragAccept,
-    isDragReject
-  } = useDropzone({onDrop, accept: type, maxFiles: 1});
+    isDragReject,
+    acceptedFiles,
+  } = useDropzone({accept: type, maxFiles: 1});
+
+  const onFileUpload = useMemo(
+    () => {
+      if (acceptedFiles.length > 0) {
+        const file = acceptedFiles[0];
+        onFileChosen(acceptedFiles[0]);
+      }
+    },
+    [acceptedFiles],
+  );
 
   const style = useMemo(() => ({
     ...baseStyle,
     ...(isDragActive ? activeStyle : {}),
     ...(isDragAccept ? acceptStyle : {}),
-    ...(isDragReject ? rejectStyle : {})
+    ...(isDragReject ? rejectStyle : {}),
   }), [
     isDragActive,
     isDragReject,
@@ -58,7 +69,9 @@ const FileDropzone = ({text, type, onFileChosen}) => {
     <div className="Dropzone">
       <div {...getRootProps({style})}>
         <input {...getInputProps()} />
-        <p>{text}</p>
+        <Typography>
+          {text}
+        </Typography>
       </div>
     </div>
   );

@@ -23,29 +23,26 @@ const chartOptions = {
     },
     y: {
       ticks: {
-        color: "white",
+        color: "aliceblue",
       }
     },
   },
 }
 
-const palette = [
-  {r: 1,   g: 0.6, b: 0.8},
-  {r: 1,   g: 0.9, b: 0.6},
-  {r: 0.5, g: 0.7, b: 0.6},
-  {r: 0.8, g: 0.6, b: 0.9},
-  {r: 0.8, g: 1,   b: 0.9},
+const colors = [
+  {r: 255, g: 255, b: 255},
+  {r: 108, g: 86,  b: 152},
+  {r: 148, g: 86,  b: 152},
+  {r: 108, g: 126, b: 132},
+  {r: 168, g: 186, b: 122},
 ];
 
-const getColor = (seed) => {
-  const theme = palette[Math.floor(palette.length * Math.random())];
-  const red = Math.floor(seed * theme.r);
-  const green = Math.floor(seed * theme.g);
-  const blue = Math.floor(seed * theme.b);
-  return `rgba(${red}, ${green}, ${blue}, 1)`;
+const getColor = (index) => {
+  const color = colors[index % colors.length];
+  return `rgba(${color.r}, ${color.g}, ${color.b}, 1)`;
 }
 
-const LineChart = ({data}) => {
+const LineChart = ({data, columnFilter}) => {
   const MAX_X_LABELS = 50;
 
   const getDataSet = (data, header, skip, color) => {
@@ -76,10 +73,14 @@ const LineChart = ({data}) => {
     // init y-values for each column
     // use filter to skip some of the values
     // and map to grab the relevant value from each row
-    const datasets = Object.keys(data[0])
-    .filter((row, i) => 0 < i && i < 5)
-    .map((header) => {
-      const color = getColor(200 * Math.random() + 55);
+    const keys = Object.keys(data[0]);
+    const datasets = keys
+    .filter((col, i) => {
+      return columnFilter.length > 0 ? columnFilter.includes(col)
+        : 0 < i && i < Math.min(keys.length, 5);
+    })
+    .map((header, index) => {
+      const color = getColor(index);
       return getDataSet(data, header, skip, color);
     })
     // create the actual chart data
@@ -88,7 +89,7 @@ const LineChart = ({data}) => {
       datasets: datasets,
     }
     return ret;
-  }, [data]);
+  }, [data, columnFilter]);
 
   return (
     <div className="GraphPanel">
