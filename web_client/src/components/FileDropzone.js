@@ -1,7 +1,6 @@
 import {Typography} from "@material-ui/core";
-import {useMemo, useCallback} from "react";
+import {useMemo} from "react";
 import {useDropzone} from "react-dropzone";
-import "./FileDropzone.css";
 
 const baseStyle = {
   flex: 1,
@@ -66,10 +65,11 @@ const FileDropzone = ({text, type, onFileChosen}) => {
   ]);
 
   return (
-    <div className="Dropzone">
+    <div style={{margin: 3}}>
       <div {...getRootProps({style})}>
         <input {...getInputProps()} />
-        <Typography>
+        <Typography
+          style={{padding: 10}}>
           {text}
         </Typography>
       </div>

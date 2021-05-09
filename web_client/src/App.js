@@ -5,15 +5,44 @@ import SelectList from "./components/SelectList";
 import AnomalyList from "./components/AnomalyList";
 import ServerHandler from "./components/ServerHandler";
 import UserDataHandler from "./components/UserDataHandler";
-import { ThemeProvider, createMuiTheme } from "@material-ui/core";
-import AirPlaneIcon from "./resources/airplane_icon.png";
+import {ThemeProvider, createMuiTheme, Typography} from "@material-ui/core";
 
 const theme = createMuiTheme({
   palette: {
-    type: "dark"
+    type: 'dark',
   }
+})
+/*
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      light: '#324053',
+      main: '#0a1a2a',
+      dark: '#000000',
+      textPrimary: '#ffffff',
+    },
+    secondary: {
+      light: '#4fb3bf',
+      main: '#00838f',
+      dark: '#005662',
+      textPrimary: '#ffffff',
+    },
+    text: {
+      main: '#ffffff',
+      primary: '#ffffff',
+      secondary: '#9a9a9a',
+      disabled: '#6c6c6c'
+    },
+    action: {
+      active: '#fffffff',
+      hover: '#141414',
+      selected: '#282828',
+      disabled: '#606060',
+      disabledBackground: '#c0c0c0',
+    },
+  },
 });
-
+*/
 /* TODO: remove demo data after server is up and running */
 const demoModels = [
   {
@@ -45,14 +74,14 @@ const demoModels = [
 
 const demoAnomalies = {
   anomalies: {
-    'pitch-deg': [[0,1],[4,5]],
-    'longitude-deg': [[0,2]],
-    'indicated-heading-deg': [[104,107]],
+    'pitch-deg': [[0,1],[22,87],[1150,1320]],
+    'longitude-deg': [[55,200],[490,490],[1700,1950]],
+    'indicated-heading-deg': [[104,257]],
   },
   reason: {
     'pitch-deg': 'airspeed-kt',
     'longitude-deg': 'altimeter_indicated-altitude-ft',
-    'indicated-heading-deg': 'attitude-indicator_indicated-pitch-deg',
+    'indicated-heading-deg': 'altimeter_pressure-alt-ft',
   }
 };
 
@@ -111,11 +140,11 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <div className="MainPage">
         <div>
-          <div className="IconArea">
-            <div className="Icon">
-              <img src={AirPlaneIcon} alt="airplane" width="100%" />
-            </div>
-          </div>
+          <Typography
+            color="textPrimary"
+            align="center">
+            AnomalyAnalyzer
+          </Typography>
           <SelectList 
             models={models}
             selectedModel={selectedModel}
@@ -135,8 +164,11 @@ const App = () => {
         <div className="DataPanel">
           <LineChart 
             data={detectData} 
-            columnFilter={selectedAnomalyPair} />
-          <DataTable data={detectData} anomalies={anomalies} />
+            columnFilter={selectedAnomalyPair}
+            anomalies={anomalies} />
+          <DataTable 
+            data={detectData}
+            anomalies={anomalies} />
         </div>
       </div>
     </ThemeProvider>

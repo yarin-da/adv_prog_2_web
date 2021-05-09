@@ -4,10 +4,12 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import {FixedSizeList} from "react-window";
+import Divider from "@material-ui/core/Divider";
 import DeleteIcon from '@material-ui/icons/Delete';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
 import IconButton from "@material-ui/core/IconButton";
+import { Typography } from "@material-ui/core";
 
 const listStyle = {
   backgroundColor: "#0a1a2a", 
@@ -41,37 +43,42 @@ const SelectList = ({models, selectedModel, onModelSelected, onDeleteItem}) => {
     const isSelected = selectedModel === model.model_id;
     const {date, hour} = parseTime(model.upload_time);
     return (
-      <ListItem 
-          button 
-          selected={isSelected}
-          onClick={(event) => onModelSelected(model.model_id)}
-          style={style} 
-          key={index}>
-        <ListItemIcon>
-          {
-            model.status === "pending" ?
-            <HourglassEmptyIcon />
-            : <CheckCircleIcon />
-          }
-        </ListItemIcon>
-        <ListItemText 
-          primary={"ID: " + model.model_id} 
-          secondary={`${date} ${hour}`} />
-        <IconButton
-          onClick={() => onDeleteItem(model.model_id)}>
-          <DeleteIcon />
-        </IconButton>
-      </ListItem>
+      <>
+        <ListItem 
+            button 
+            selected={isSelected}
+            onClick={(event) => onModelSelected(model.model_id)}
+            style={style} 
+            key={index}>
+          <ListItemIcon>
+            {
+              model.status === "pending" ?
+              <HourglassEmptyIcon />
+              : <CheckCircleIcon style={{color: "lightgreen"}} />
+            }
+          </ListItemIcon>
+          <ListItemText 
+            primary={"ID: " + model.model_id} 
+            secondary={`${date} ${hour}`} />
+          <IconButton
+            onClick={() => onDeleteItem(model.model_id)}>
+            <DeleteIcon style={{color: "lightslategray"}} />
+          </IconButton>
+        </ListItem>
+        <Divider light />
+      </>
     );
   }
 
   return (
     <div>
-      <SearchBar onSearchChanged={onSearchChanged} />
+      <SearchBar 
+        label="Model List"
+        onSearchChanged={onSearchChanged} />
       <FixedSizeList 
         style={listStyle}
         height={200} 
-        width={250} 
+        width={300} 
         itemSize={70} 
         itemCount={list.length}>
         {renderRow}

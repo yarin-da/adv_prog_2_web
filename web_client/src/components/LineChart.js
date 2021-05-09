@@ -1,40 +1,28 @@
 import { Line } from "react-chartjs-2";
 import { useMemo } from "react";
 
-const chartOptions = {
-  responsive: true, 
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      labels: {
-        // legend text colors
-        color: "aliceblue",
-      },
-    },
-  },
-  scales: {
-    x: {
-      ticks: {
-        // hide all x axis labels
-        callback: (val, index) => {
-          return '';
-        },
-      }
-    },
-    y: {
-      ticks: {
-        color: "aliceblue",
-      }
-    },
-  },
-}
+const isAnomaly = (anomalies, feature, skip, ctx) => {
+  const spans = anomalies.anomalies[feature];
+  if (spans == null) {
+    return false;
+  }
+  for (let i = 0; i < spans.length; i++) {
+    const start = spans[i][0] / skip;
+    const end = spans[i][1] / skip;
+    const x = ctx.p0.parsed.x
+    if (start <= x && x <= end) {
+      return true;
+    }
+  }
+  return false;
+};
 
 const colors = [
-  {r: 255, g: 255, b: 255},
   {r: 108, g: 86,  b: 152},
+  {r: 168, g: 186, b: 122},
   {r: 148, g: 86,  b: 152},
   {r: 108, g: 126, b: 132},
-  {r: 168, g: 186, b: 122},
+  {r: 255, g: 255, b: 255},
 ];
 
 const getColor = (index) => {
@@ -42,25 +30,19 @@ const getColor = (index) => {
   return `rgba(${color.r}, ${color.g}, ${color.b}, 1)`;
 }
 
-const LineChart = ({data, columnFilter}) => {
-  const MAX_X_LABELS = 50;
+const LineChart = ({data, columnFilter, anomalies}) => {
+  const MAX_X_LABELS = 150;
 
-  const getDataSet = (data, header, skip, color) => {
-    const yValues = data
-      .filter((row, i) => i % skip === 0)
-      .map(row => row[header]);
-    return {
-      label: header,
-      data: yValues,
-      borderColor: color,
-      radius: 0,
-    }
-  };
-
-  const chartData = useMemo(() => {
+  const {chartData, chartOptions} = useMemo(() => {
     // return if there's no data
     if (data == null || data[0] == null) { 
       return {}; 
+    }
+    if (columnFilter == null || columnFilter.length < 2) {
+      return {};
+    }
+    if (anomalies == null) {
+      return {};
     }
 
     // handle value skipping
@@ -68,7 +50,12 @@ const LineChart = ({data, columnFilter}) => {
     const max = Math.min(MAX_X_LABELS, data.length);
     const skip = Math.trunc(data.length / max);
     // init labels (i.e. x-axis values)
-    const chartLabels = [...Array(max).keys()];
+    const chartLabels = [];
+    let labelValue = 0;
+    for (let i = 0; i < max; i++) {
+      chartLabels.push(labelValue);
+      labelValue += skip;
+    }
 
     // init y-values for each column
     // use filter to skip some of the values
@@ -81,21 +68,70 @@ const LineChart = ({data, columnFilter}) => {
     })
     .map((header, index) => {
       const color = getColor(index);
-      return getDataSet(data, header, skip, color);
-    })
+      const yValues = data
+        .filter((row, i) => i % skip === 0)
+        .map(row => row[header]);
+      return {
+        label: header,
+        data: yValues,
+        borderColor: color,
+        radius: 0,
+        segment: {
+          borderColor: (ctx) => {
+            return isAnomaly(anomalies, columnFilter[0], skip, ctx) ? 
+              'rgb(175,55,55)' 
+              : undefined;
+          }
+        },
+      };
+    });
+
+    const chartOptions = {
+      responsive: true, 
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: {
+            // legend text colors
+            color: "aliceblue",
+          },
+        },
+      },
+      scales: {
+        x: {
+          ticks: {
+            // hide all x axis labels
+            //callback: (val, index) => {
+            //  return '';
+            //},
+            color: "aliceblue",
+          },
+          title: {
+            display: true,
+            text: "timesteps",
+            color: "aliceblue",
+          }
+        },
+        y: {
+          ticks: {
+            color: "aliceblue",
+          },
+        },
+      },
+    };
     // create the actual chart data
-    const ret = {
+    const chartData = {
       labels: chartLabels,
       datasets: datasets,
-    }
-    return ret;
-  }, [data, columnFilter]);
+    };
+    return {chartData: chartData, chartOptions: chartOptions};
+  }, [data, columnFilter, anomalies]);
 
   return (
     <div className="GraphPanel">
       <Line options={chartOptions} data={chartData} />
     </div>
   );
-}
+};
 
 export default LineChart;
