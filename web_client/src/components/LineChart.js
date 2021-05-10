@@ -30,16 +30,13 @@ const getColor = (index) => {
   return `rgba(${color.r}, ${color.g}, ${color.b}, 1)`;
 }
 
-const LineChart = ({data, columnFilter, anomalies}) => {
+const LineChart = ({data, anomalyPair, anomalies}) => {
   const MAX_X_LABELS = 150;
 
   const {chartData, chartOptions} = useMemo(() => {
     // return if there's no data
     if (data == null || data[0] == null) { 
       return {}; 
-    }
-    if (columnFilter == null || columnFilter.length < 2) {
-      return {};
     }
     if (anomalies == null) {
       return {};
@@ -63,8 +60,9 @@ const LineChart = ({data, columnFilter, anomalies}) => {
     const keys = Object.keys(data[0]);
     const datasets = keys
     .filter((col, i) => {
-      return columnFilter.length > 0 ? columnFilter.includes(col)
-        : 0 < i && i < Math.min(keys.length, 5);
+      const maxColsToDisplay = 5;
+      return anomalyPair.length > 0 ? anomalyPair.includes(col)
+        : 0 < i && i < Math.min(keys.length, maxColsToDisplay);
     })
     .map((header, index) => {
       const color = getColor(index);
@@ -78,8 +76,9 @@ const LineChart = ({data, columnFilter, anomalies}) => {
         radius: 0,
         segment: {
           borderColor: (ctx) => {
-            return isAnomaly(anomalies, columnFilter[0], skip, ctx) ? 
-              'rgb(175,55,55)' 
+            const anomalyColor = 'rgb(175,55,55)';
+            return anomalyPair != null && isAnomaly(anomalies, anomalyPair[0], skip, ctx) ? 
+              anomalyColor 
               : undefined;
           }
         },
@@ -125,7 +124,7 @@ const LineChart = ({data, columnFilter, anomalies}) => {
       datasets: datasets,
     };
     return {chartData: chartData, chartOptions: chartOptions};
-  }, [data, columnFilter, anomalies]);
+  }, [data, anomalyPair, anomalies]);
 
   return (
     <div className="GraphPanel">

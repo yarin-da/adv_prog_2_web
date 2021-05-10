@@ -142,8 +142,9 @@ const App = () => {
         <div>
           <Typography
             color="textPrimary"
+            fontSize={40}
             align="center">
-            AnomalyAnalyzer
+            Anomaly Analyzer
           </Typography>
           <SelectList 
             models={models}
@@ -164,10 +165,11 @@ const App = () => {
         <div className="DataPanel">
           <LineChart 
             data={detectData} 
-            columnFilter={selectedAnomalyPair}
+            anomalyPair={selectedAnomalyPair}
             anomalies={anomalies} />
           <DataTable 
             data={detectData}
+            anomalyPair={selectedAnomalyPair}
             anomalies={anomalies} />
         </div>
       </div>

@@ -38,6 +38,19 @@ const AnomalyList = ({anomalies, selectedAnomalyPair, onAnomalyPairSelected}) =>
     return filtered;
   }, [search, anomalies]);
 
+  const isItemSelected = (feature) => {
+    if (selectedAnomalyPair.length <= 0) return false;
+    return feature === selectedAnomalyPair[0];
+  };
+
+  const onItemClicked = (feature1, feature2) => {
+    if (isItemSelected(feature1)) {
+      onAnomalyPairSelected([]);
+    } else {
+      onAnomalyPairSelected([feature1, feature2]);
+    }
+  };
+
   const renderRow = ({index}) => {
     const feature1 = list[index];
     const feature2 = anomalies.reason[feature1];
@@ -47,8 +60,8 @@ const AnomalyList = ({anomalies, selectedAnomalyPair, onAnomalyPairSelected}) =>
             button 
             key={index}
             classes={classes.listitem}
-            selected={feature1 === selectedAnomalyPair[0]}
-            onClick={() => onAnomalyPairSelected([feature1, feature2])}>
+            selected={isItemSelected(feature1)}
+            onClick={() => onItemClicked(feature1, feature2)}>
           <ListItemAvatar>
               <ErrorIcon style={{color: "lightcoral"}} />
           </ListItemAvatar>
