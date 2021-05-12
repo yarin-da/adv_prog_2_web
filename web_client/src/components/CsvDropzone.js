@@ -36,7 +36,8 @@ const CsvDropzone = ({text, onDataChanged}) => {
     <FileDropzone 
       text={text} 
       type={csvType} 
-      onFileChosen={onFileLoad} />
+      onFileChosen={onFileLoad}
+    />
   );
 }
 

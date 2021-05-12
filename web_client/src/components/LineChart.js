@@ -18,11 +18,11 @@ const isAnomaly = (anomalies, feature, skip, ctx) => {
 };
 
 const colors = [
-  {r: 108, g: 86,  b: 152},
-  {r: 168, g: 186, b: 122},
-  {r: 148, g: 86,  b: 152},
-  {r: 108, g: 126, b: 132},
-  {r: 255, g: 255, b: 255},
+  {r: 110, g: 85,  b: 150},
+  {r: 135, g: 180, b: 120},
+  {r: 0, g: 150, b: 190},
+  {r: 185, g: 130, b: 0},
+  {r: 185, g: 185, b: 100},
 ];
 
 const getColor = (index) => {
@@ -62,7 +62,7 @@ const LineChart = ({data, anomalyPair, anomalies}) => {
     .filter((col, i) => {
       const maxColsToDisplay = 5;
       return anomalyPair.length > 0 ? anomalyPair.includes(col)
-        : 0 < i && i < Math.min(keys.length, maxColsToDisplay);
+        : 0 < i && i <= Math.min(keys.length - 1, maxColsToDisplay);
     })
     .map((header, index) => {
       const color = getColor(index);
@@ -77,7 +77,7 @@ const LineChart = ({data, anomalyPair, anomalies}) => {
         pointHitRadius: 15,
         segment: {
           borderColor: (ctx) => {
-            const anomalyColor = 'rgb(175,55,55)';
+            const anomalyColor = 'rgb(200, 70, 70)';
             return anomalyPair != null && isAnomaly(anomalies, anomalyPair[0], skip, ctx) ? 
               anomalyColor 
               : undefined;

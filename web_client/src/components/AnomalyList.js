@@ -27,15 +27,18 @@ const AnomalyList = ({anomalies, selectedAnomalyPair, onAnomalyPairSelected}) =>
   const onSearchChanged = (search) => {
     setSearch(search);
   }
-  const list = useMemo(() => {
-    if (anomalies == null) { return []; }
-    const reasons = Object.keys(anomalies.reason);
-    const filtered = reasons.filter((feature) => {
-      const str = `${feature} - ${anomalies.reason[feature]}`;
-      return !search || str.includes(search);
-    });
-    return filtered;
-  }, [search, anomalies]);
+  const list = useMemo(
+    () => {
+      if (anomalies == null) { return []; }
+      const reasons = Object.keys(anomalies.reason);
+      const filtered = reasons.filter((feature) => {
+        const str = `${feature} - ${anomalies.reason[feature]}`;
+        return !search || str.includes(search);
+      });
+      return filtered;
+    }, 
+    [search, anomalies]
+  );
 
   const isItemSelected = (feature) => {
     if (selectedAnomalyPair.length <= 0) return false;
@@ -56,18 +59,20 @@ const AnomalyList = ({anomalies, selectedAnomalyPair, onAnomalyPairSelected}) =>
     return (
       <>
         <ListItem 
-            button 
-            key={index}
-            classes={classes.listitem}
-            selected={isItemSelected(feature1)}
-            onClick={() => onItemClicked(feature1, feature2)}>
+          button 
+          key={index}
+          classes={classes.listitem}
+          selected={isItemSelected(feature1)}
+          onClick={() => onItemClicked(feature1, feature2)}
+        >
           <ListItemAvatar>
               <ErrorIcon style={{color: 'lightcoral'}} />
           </ListItemAvatar>
           <ListItemText
             className={classes.item}
             primary={feature1}
-            secondary={feature2}/>
+            secondary={feature2}
+          />
         </ListItem>
         <Divider light />
       </>
@@ -78,13 +83,14 @@ const AnomalyList = ({anomalies, selectedAnomalyPair, onAnomalyPairSelected}) =>
     <div>
       <SearchBar 
         label='Anomaly List'
-        onSearchChanged={onSearchChanged} />
+        onSearchChanged={onSearchChanged}
+      />
       <FixedSizeList 
         style={listStyle}
-        height={240} 
-        width={300} 
+        height={265} 
         itemSize={50} 
-        itemCount={list.length}>
+        itemCount={list.length}
+      >
         {renderRow}
       </FixedSizeList>
     </div>

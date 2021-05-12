@@ -74,8 +74,7 @@ const SelectList = ({models, selectedModel, onModelSelected, onDeleteItem}) => {
         onSearchChanged={onSearchChanged} />
       <FixedSizeList 
         style={listStyle}
-        height={255} 
-        width={300} 
+        height={285} 
         itemSize={70} 
         itemCount={list.length}>
         {renderRow}

@@ -12,18 +12,10 @@ code {
     monospace;
 }
 
-html {
-  background-color: #232323;
-}
-
 .MainPage {
   display: grid;
-  grid-template-columns: 300px 1px 1fr;
-  background-color: #232323;
-}
-
-.Divider {
-  background-color: #4fb3bf;
+  grid-template-columns: 330px 1fr;
+  background-color: #0a1a2a;
 }
 
 .DataPanel {
@@ -31,6 +23,13 @@ html {
   grid-template-rows: 60vh 40vh;
 }
 
-.GraphPanel {
-  background-color: #0a1a2a;
+.DataTable {
+  background-color: #232323;
+  height: 100%;
 }
+
+/*
+.GraphPanel {
+  
+}
+*/

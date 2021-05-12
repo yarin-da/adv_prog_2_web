@@ -4,47 +4,33 @@ import LineChart from './components/LineChart';
 import SelectList from './components/SelectList';
 import AnomalyList from './components/AnomalyList';
 import ServerHandler from './components/ServerHandler';
-import Icon from '@material-ui/core/Icon';
 import Button from '@material-ui/core/Button';
 import CsvDropzone from './components/CsvDropzone';
-import { ThemeProvider, createMuiTheme, Typography } from '@material-ui/core';
-import LocalAirportRoundedIcon from '@material-ui/icons/LocalAirportRounded';
-
-// const theme = createMuiTheme({
-//   palette: {
-//     type: 'dark',
-//   }
-// })
+import { ThemeProvider, createMuiTheme } from '@material-ui/core';
 
 const theme = createMuiTheme({
   palette: {
-    primary: {
-      light: '#324053',
-      main: '#0a1a2a',
-      dark: '#000000',
-      textPrimary: '#ffffff',
-    },
+    type: 'dark',
     secondary: {
       light: '#4fb3bf',
       main: '#00838f',
       dark: '#005662',
       textPrimary: '#ffffff',
     },
-    text: {
+    primary: {
+      light: '#324053',
+      main: '#0a1a2a',
+      dark: '#000000',
+      textPrimary: '#ffffff',
+    },
+        text: {
       main: '#ffffff',
       primary: '#ffffff',
       secondary: '#9a9a9a',
       disabled: '#6c6c6c'
     },
-    action: {
-      active: '#fffffff',
-      hover: '#141414',
-      selected: '#282828',
-      disabled: '#606060',
-      disabledBackground: '#c0c0c0',
-    },
-  },
-});
+  }
+})
 
 /* TODO: remove demo data after server is up and running */
 const demoModels = [
@@ -142,40 +128,19 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <div className='MainPage'>
-        <div style={{display: 'flex', flexDirection: 'column',}}>
-          <div style={{
-            display: 'flex',
-            height: 50, 
-            padding: 5,}}>
-            <Icon style={{
-              marginRight: 15,
-              padding: 10,
-              paddingBottom: 15,
-              alignSelf: 'center',
-              }}>
-              <LocalAirportRoundedIcon style={{color: '#fff', fontSize: 'xx-large',}} />
-            </Icon>
-            <Typography
-              color='textPrimary'
-              variant='h5'
-              style={{
-                color: '#fff',
-                fontWeight: 'bold', 
-                alignSelf: 'center', 
-                padding: 5}}>
-              Anomaly Analyzer
-            </Typography>
-          </div>
-          <div>
+        <div>
+          <div style={{margin: 10, border: 'solid 2px #324053', borderRadius: 4}}>
             <AnomalyList 
               anomalies={anomalies}
               selectedAnomalyPair={selectedAnomalyPair}
-              onAnomalyPairSelected={onAnomalyPairSelected} />
+              onAnomalyPairSelected={onAnomalyPairSelected} 
+            />
             <CsvDropzone 
               onDataChanged={onDetectDataChanged}
-              text='Drop a flight data file' />
+              text='Drop a flight data file' 
+            />
           </div>
-          <div>
+          <div style={{margin: 10, border: 'solid 2px #324053', borderRadius: 4}}>
             <SelectList 
               models={models}
               selectedModel={selectedModel}
@@ -184,33 +149,38 @@ const App = () => {
             <CsvDropzone 
               onDataChanged={onTrainDataChanged}
               text='Drop a training data file' />
-            <Button
-              fullWidth
-              color='secondary'
-              variant={modelType === 'regression' ? 'contained' : 'outlined'}
-              onClick={() => onModelTypeChanged('regression')}>
+            <div style={{margin: 2}}>
+              <Button
+                fullWidth
+                color='secondary'
+                variant={modelType === 'regression' ? 'contained' : 'outlined'}
+                onClick={() => onModelTypeChanged('regression')}
+              >
                 Regression
-            </Button>
-            <Button
-              fullWidth
-              color='secondary'
-              variant={modelType === 'hybrid' ? 'contained' : 'outlined'}
-              onClick={() => onModelTypeChanged('hybrid')}>
+              </Button>
+              <Button
+                fullWidth
+                color='secondary'
+                variant={modelType === 'hybrid' ? 'contained' : 'outlined'}
+                onClick={() => onModelTypeChanged('hybrid')}
+              >
                 Hybrid
-            </Button>
+              </Button>
+            </div>
           </div>
         </div>
-        <div className='Divider' />
         <div className='DataPanel'>
           <LineChart 
             data={detectData} 
             anomalyPair={selectedAnomalyPair}
-            anomalies={anomalies} />
+            anomalies={anomalies} 
+          />
           <DataTable 
             data={detectData}
             anomalyPair={selectedAnomalyPair}
-            anomalies={anomalies} />
-        </div>
+            anomalies={anomalies} 
+          />
+          </div>
       </div>
     </ThemeProvider>
   );

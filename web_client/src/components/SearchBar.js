@@ -12,18 +12,22 @@ const SearchBar = ({onSearchChanged, label}) => {
       onChange={(event) => onSearchChanged(event.target.value)}
       label={label}
       fullWidth
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position='end'>
-            <SearchIcon/>
-          </InputAdornment>
-        ),
-      }}/>
+      InputProps={
+        {
+          endAdornment: (
+            <InputAdornment position='end'>
+              <SearchIcon/>
+            </InputAdornment>
+          ),
+        }
+      }
+    />
   );
 }
 
 SearchBar.defaultProps = {
   label: 'Search',
+  onSearchChanged: (e) => {},
 };
 
 export default SearchBar;

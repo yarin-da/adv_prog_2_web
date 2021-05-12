@@ -10,10 +10,9 @@ const baseStyle = {
   padding: '25px',
   borderWidth: 0,
   borderRadius: 5,
-  borderColor: '#dddddd',
   borderStyle: 'solid',
-  backgroundColor: '#fafafa',
-  color: '#acacac',
+  backgroundColor: '#acacac',
+  color: '#555555',
   outline: 'none',
   transition: 'border .24s ease-in-out'
 };
