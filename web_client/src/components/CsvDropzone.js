@@ -1,10 +1,10 @@
-import FileDropzone from "./FileDropzone";
-import csvToJson from "csvtojson";
+import FileDropzone from './FileDropzone';
+import csvToJson from 'csvtojson';
 
 // a wrapper for FileDropzone
 // loads only csv files and parses them to json
 const CsvDropzone = ({text, onDataChanged}) => {
-  const csvType = ".csv, application/vnd.ms-excel, text/csv";
+  const csvType = '.csv, application/vnd.ms-excel, text/csv';
 
   const onFileLoad = (file) => {
     // store the csv file's data

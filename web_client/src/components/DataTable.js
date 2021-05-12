@@ -1,6 +1,6 @@
-import {useMemo, useState} from "react";
-import {DataGrid} from "@material-ui/data-grid";
-import {makeStyles, darken} from "@material-ui/core/styles";
+import { useMemo, useState } from 'react';
+import { DataGrid } from '@material-ui/data-grid';
+import { makeStyles, darken } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => {
   return {

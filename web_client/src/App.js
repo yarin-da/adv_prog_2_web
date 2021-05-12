@@ -1,18 +1,21 @@
-import {useCallback, useState} from "react";
-import DataTable from "./components/DataTable";
-import LineChart from "./components/LineChart";
-import SelectList from "./components/SelectList";
-import AnomalyList from "./components/AnomalyList";
-import ServerHandler from "./components/ServerHandler";
-import UserDataHandler from "./components/UserDataHandler";
-import {ThemeProvider, createMuiTheme, Typography} from "@material-ui/core";
+import {useCallback, useState} from 'react';
+import DataTable from './components/DataTable';
+import LineChart from './components/LineChart';
+import SelectList from './components/SelectList';
+import AnomalyList from './components/AnomalyList';
+import ServerHandler from './components/ServerHandler';
+import Icon from '@material-ui/core/Icon';
+import Button from '@material-ui/core/Button';
+import CsvDropzone from './components/CsvDropzone';
+import { ThemeProvider, createMuiTheme, Typography } from '@material-ui/core';
+import LocalAirportRoundedIcon from '@material-ui/icons/LocalAirportRounded';
 
-const theme = createMuiTheme({
-  palette: {
-    type: 'dark',
-  }
-})
-/*
+// const theme = createMuiTheme({
+//   palette: {
+//     type: 'dark',
+//   }
+// })
+
 const theme = createMuiTheme({
   palette: {
     primary: {
@@ -42,33 +45,33 @@ const theme = createMuiTheme({
     },
   },
 });
-*/
+
 /* TODO: remove demo data after server is up and running */
 const demoModels = [
   {
     model_id: 0,
-    upload_time: "2021-04-22T19:15:32+02.00",
-    status: "ready",
+    upload_time: '2021-04-22T19:15:32+02.00',
+    status: 'ready',
   },
   {
     model_id: 1,
-    upload_time: "2021-04-21T18:17:32+02.00",
-    status: "pending",
+    upload_time: '2021-04-21T18:17:32+02.00',
+    status: 'pending',
   },
   {
     model_id: 2,
-    upload_time: "2021-04-25T21:15:32+02.00",
-    status: "ready",
+    upload_time: '2021-04-25T21:15:32+02.00',
+    status: 'ready',
   },
   {
     model_id: 3,
-    upload_time: "2021-04-30T19:07:32+02.00",
-    status: "pending",
+    upload_time: '2021-04-30T19:07:32+02.00',
+    status: 'pending',
   },
   {
     model_id: 4,
-    upload_time: "2021-05-04T09:15:32+02.00",
-    status: "pending",
+    upload_time: '2021-05-04T09:15:32+02.00',
+    status: 'pending',
   },
 ]
 
@@ -95,7 +98,7 @@ const App = () => {
 
   const [detectData, setDetectData] = useState([]); // flight data to test for anomalies
   const [trainData, setTrainData] = useState([]); // training data 
-  const [modelType, setModelType] = useState("regression"); // user's desired model type
+  const [modelType, setModelType] = useState('regression'); // user's desired model type
 
   const onModelSelected = (model_id) => {
     setSelectedModel(model_id);
@@ -124,45 +127,81 @@ const App = () => {
       const modelResponse = jsonData;
       console.log(`POST /api/model response: ${modelResponse}`);
     });
-  }, [trainData]);
+  }, [trainData, modelType]);
 
   const getAnomaliesFromServer = useCallback(() => {
     // make sure all the data required has been initialized
-    if (modelType === -1 || detectData === []) { return; }
+    if (selectedModel === -1 || detectData === []) { return; }
     // send request to the server
-    ServerHandler.postAnomalies(modelType, detectData, (jsonData) => {
+    ServerHandler.postAnomalies(selectedModel, detectData, (jsonData) => {
       const anomaliesResponse = jsonData;
       console.log(`POST /api/anomaly response: ${anomaliesResponse}`);
     });
-  }, [selectedModel, detectData]);
+  }, [detectData, selectedModel]);
 
   return (
     <ThemeProvider theme={theme}>
-      <div className="MainPage">
-        <div>
-          <Typography
-            color="textPrimary"
-            fontSize={40}
-            align="center">
-            Anomaly Analyzer
-          </Typography>
-          <SelectList 
-            models={models}
-            selectedModel={selectedModel}
-            onModelSelected={onModelSelected}
-            onDeleteItem={deleteModel} />
-          <AnomalyList 
-            anomalies={anomalies}
-            selectedAnomalyPair={selectedAnomalyPair}
-            onAnomalyPairSelected={onAnomalyPairSelected} />
-          <UserDataHandler 
-            modelType={modelType}
-            onModelTypeChanged={onModelTypeChanged}
-            onDetectDataChanged={onDetectDataChanged} 
-            onTrainDataChanged={onTrainDataChanged} />
+      <div className='MainPage'>
+        <div style={{display: 'flex', flexDirection: 'column',}}>
+          <div style={{
+            display: 'flex',
+            height: 50, 
+            padding: 5,}}>
+            <Icon style={{
+              marginRight: 15,
+              padding: 10,
+              paddingBottom: 15,
+              alignSelf: 'center',
+              }}>
+              <LocalAirportRoundedIcon style={{color: '#fff', fontSize: 'xx-large',}} />
+            </Icon>
+            <Typography
+              color='textPrimary'
+              variant='h5'
+              style={{
+                color: '#fff',
+                fontWeight: 'bold', 
+                alignSelf: 'center', 
+                padding: 5}}>
+              Anomaly Analyzer
+            </Typography>
+          </div>
+          <div>
+            <AnomalyList 
+              anomalies={anomalies}
+              selectedAnomalyPair={selectedAnomalyPair}
+              onAnomalyPairSelected={onAnomalyPairSelected} />
+            <CsvDropzone 
+              onDataChanged={onDetectDataChanged}
+              text='Drop a flight data file' />
+          </div>
+          <div>
+            <SelectList 
+              models={models}
+              selectedModel={selectedModel}
+              onModelSelected={onModelSelected}
+              onDeleteItem={deleteModel} />
+            <CsvDropzone 
+              onDataChanged={onTrainDataChanged}
+              text='Drop a training data file' />
+            <Button
+              fullWidth
+              color='secondary'
+              variant={modelType === 'regression' ? 'contained' : 'outlined'}
+              onClick={() => onModelTypeChanged('regression')}>
+                Regression
+            </Button>
+            <Button
+              fullWidth
+              color='secondary'
+              variant={modelType === 'hybrid' ? 'contained' : 'outlined'}
+              onClick={() => onModelTypeChanged('hybrid')}>
+                Hybrid
+            </Button>
+          </div>
         </div>
-        <div className="Divider" />
-        <div className="DataPanel">
+        <div className='Divider' />
+        <div className='DataPanel'>
           <LineChart 
             data={detectData} 
             anomalyPair={selectedAnomalyPair}

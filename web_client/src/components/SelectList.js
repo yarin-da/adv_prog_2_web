@@ -1,25 +1,22 @@
-import {useState, useMemo} from "react";
-import SearchBar from "./SearchBar";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import {FixedSizeList} from "react-window";
-import Divider from "@material-ui/core/Divider";
+import { useState, useMemo } from 'react';
+import { FixedSizeList } from 'react-window';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import Divider from '@material-ui/core/Divider';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
-import IconButton from "@material-ui/core/IconButton";
-import { Typography } from "@material-ui/core";
+import IconButton from '@material-ui/core/IconButton';
+import SearchBar from './SearchBar';
 
 const listStyle = {
-  backgroundColor: "#0a1a2a", 
-  color: "#fff",
-  borderTop: "solid #607f9f 1px",
-  borderBottom: "solid #607f9f 1px",
+  backgroundColor: '#0a1a2a', 
+  color: '#fff',
 }
 
 const SelectList = ({models, selectedModel, onModelSelected, onDeleteItem}) => {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const onSearchChanged = (search) => {
     setSearch(search);
   }
@@ -28,14 +25,14 @@ const SelectList = ({models, selectedModel, onModelSelected, onDeleteItem}) => {
       return models;
     }
     const filtered = models.filter((model) => {
-      return model.model_id === parseInt(search);
+      return `id=${model.model_id} ${model.upload_time} ${model.status}`.includes(search);
     });
     return filtered;
   }, [search, models]);
 
   const parseTime = (time) => {
-    const splitTime = time.split("T");
-    return {date: splitTime[0], hour: splitTime[1].split("+")[0]};
+    const splitTime = time.split('T');
+    return {date: splitTime[0], hour: splitTime[1].split('+')[0]};
   };
 
   const renderRow = ({index, style}) => {
@@ -52,17 +49,17 @@ const SelectList = ({models, selectedModel, onModelSelected, onDeleteItem}) => {
             key={index}>
           <ListItemIcon>
             {
-              model.status === "pending" ?
+              model.status === 'pending' ?
               <HourglassEmptyIcon />
-              : <CheckCircleIcon style={{color: "lightgreen"}} />
+              : <CheckCircleIcon style={{color: 'lightgreen'}} />
             }
           </ListItemIcon>
           <ListItemText 
-            primary={"ID: " + model.model_id} 
+            primary={'Model ID: ' + model.model_id} 
             secondary={`${date} ${hour}`} />
           <IconButton
             onClick={() => onDeleteItem(model.model_id)}>
-            <DeleteIcon style={{color: "lightslategray"}} />
+            <DeleteIcon style={{color: 'lightslategray'}} />
           </IconButton>
         </ListItem>
         <Divider light />
@@ -73,11 +70,11 @@ const SelectList = ({models, selectedModel, onModelSelected, onDeleteItem}) => {
   return (
     <div>
       <SearchBar 
-        label="Model List"
+        label='Model List'
         onSearchChanged={onSearchChanged} />
       <FixedSizeList 
         style={listStyle}
-        height={200} 
+        height={255} 
         width={300} 
         itemSize={70} 
         itemCount={list.length}>

@@ -1,5 +1,5 @@
-import { Line } from "react-chartjs-2";
-import { useMemo } from "react";
+import { Line } from 'react-chartjs-2';
+import { useMemo } from 'react';
 
 const isAnomaly = (anomalies, feature, skip, ctx) => {
   const spans = anomalies.anomalies[feature];
@@ -74,6 +74,7 @@ const LineChart = ({data, anomalyPair, anomalies}) => {
         data: yValues,
         borderColor: color,
         radius: 0,
+        pointHitRadius: 15,
         segment: {
           borderColor: (ctx) => {
             const anomalyColor = 'rgb(175,55,55)';
@@ -92,7 +93,7 @@ const LineChart = ({data, anomalyPair, anomalies}) => {
         legend: {
           labels: {
             // legend text colors
-            color: "aliceblue",
+            color: 'aliceblue',
           },
         },
       },
@@ -103,17 +104,17 @@ const LineChart = ({data, anomalyPair, anomalies}) => {
             //callback: (val, index) => {
             //  return '';
             //},
-            color: "aliceblue",
+            color: 'aliceblue',
           },
           title: {
             display: true,
-            text: "timesteps",
-            color: "aliceblue",
+            text: 'timesteps',
+            color: 'aliceblue',
           }
         },
         y: {
           ticks: {
-            color: "aliceblue",
+            color: 'aliceblue',
           },
         },
       },
@@ -127,7 +128,7 @@ const LineChart = ({data, anomalyPair, anomalies}) => {
   }, [data, anomalyPair, anomalies]);
 
   return (
-    <div className="GraphPanel">
+    <div className='GraphPanel'>
       <Line options={chartOptions} data={chartData} />
     </div>
   );

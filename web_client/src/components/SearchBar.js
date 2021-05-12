@@ -1,19 +1,20 @@
-import TextField from "@material-ui/core/TextField";
+import TextField from '@material-ui/core/TextField';
 import SearchIcon from '@material-ui/icons/Search';
-import InputAdornment from "@material-ui/core/InputAdornment";
+import InputAdornment from '@material-ui/core/InputAdornment';
 
 const SearchBar = ({onSearchChanged, label}) => {
   return (
     <TextField 
-      color="secondary"
-      variant="filled" 
-      size="small"
-      onChange={(event) => {onSearchChanged(event.target.value)}}
+      color='secondary'
+      variant='filled' 
+      size='small'
+      style={{backgroundColor: '#353535'}}
+      onChange={(event) => onSearchChanged(event.target.value)}
       label={label}
       fullWidth
       InputProps={{
         endAdornment: (
-          <InputAdornment position="end">
+          <InputAdornment position='end'>
             <SearchIcon/>
           </InputAdornment>
         ),
@@ -22,7 +23,7 @@ const SearchBar = ({onSearchChanged, label}) => {
 }
 
 SearchBar.defaultProps = {
-  label: "Search",
+  label: 'Search',
 };
 
 export default SearchBar;

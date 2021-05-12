@@ -19,10 +19,11 @@ html {
 .MainPage {
   display: grid;
   grid-template-columns: 300px 1px 1fr;
+  background-color: #232323;
 }
 
 .Divider {
-  background-color: #607f9f;
+  background-color: #4fb3bf;
 }
 
 .DataPanel {
@@ -32,8 +33,4 @@ html {
 
 .GraphPanel {
   background-color: #0a1a2a;
-}
-
-.TablePanel {
-  padding: 0px;
 }

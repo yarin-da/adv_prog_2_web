@@ -1,12 +1,12 @@
-import {useState, useMemo} from "react";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import {FixedSizeList} from "react-window";
-import {makeStyles} from "@material-ui/core";
-import Divider from "@material-ui/core/Divider";
+import { useState, useMemo } from 'react';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import { FixedSizeList } from 'react-window';
+import { makeStyles } from '@material-ui/core';
+import Divider from '@material-ui/core/Divider';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ErrorIcon from '@material-ui/icons/Error';
-import SearchBar from "./SearchBar";
+import SearchBar from './SearchBar';
 
 const useStyles = makeStyles({
   item: {
@@ -17,19 +17,18 @@ const useStyles = makeStyles({
 });
 
 const listStyle = {
-  backgroundColor: "#0a1a2a", 
-  color: "#fff",
-  borderTop: "solid #607f9f 1px",
-  borderBottom: "solid #607f9f 1px",
+  backgroundColor: '#0a1a2a', 
+  color: '#fff',
 };
 
 const AnomalyList = ({anomalies, selectedAnomalyPair, onAnomalyPairSelected}) => {
   const classes = useStyles();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const onSearchChanged = (search) => {
     setSearch(search);
   }
   const list = useMemo(() => {
+    if (anomalies == null) { return []; }
     const reasons = Object.keys(anomalies.reason);
     const filtered = reasons.filter((feature) => {
       const str = `${feature} - ${anomalies.reason[feature]}`;
@@ -63,7 +62,7 @@ const AnomalyList = ({anomalies, selectedAnomalyPair, onAnomalyPairSelected}) =>
             selected={isItemSelected(feature1)}
             onClick={() => onItemClicked(feature1, feature2)}>
           <ListItemAvatar>
-              <ErrorIcon style={{color: "lightcoral"}} />
+              <ErrorIcon style={{color: 'lightcoral'}} />
           </ListItemAvatar>
           <ListItemText
             className={classes.item}
@@ -78,11 +77,11 @@ const AnomalyList = ({anomalies, selectedAnomalyPair, onAnomalyPairSelected}) =>
   return (
     <div>
       <SearchBar 
-        label="Anomaly List"
+        label='Anomaly List'
         onSearchChanged={onSearchChanged} />
       <FixedSizeList 
         style={listStyle}
-        height={200} 
+        height={240} 
         width={300} 
         itemSize={50} 
         itemCount={list.length}>

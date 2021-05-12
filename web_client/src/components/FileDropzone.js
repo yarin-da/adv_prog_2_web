@@ -1,6 +1,6 @@
-import {Typography} from "@material-ui/core";
-import {useMemo} from "react";
-import {useDropzone} from "react-dropzone";
+import { Typography } from '@material-ui/core';
+import { useMemo } from 'react';
+import { useDropzone } from 'react-dropzone';
 
 const baseStyle = {
   flex: 1,
@@ -8,7 +8,7 @@ const baseStyle = {
   flexDirection: 'column',
   alignItems: 'center',
   padding: '25px',
-  borderWidth: 2,
+  borderWidth: 0,
   borderRadius: 5,
   borderColor: '#dddddd',
   borderStyle: 'solid',
@@ -46,7 +46,6 @@ const FileDropzone = ({text, type, onFileChosen}) => {
   const onFileUpload = useMemo(
     () => {
       if (acceptedFiles.length > 0) {
-        const file = acceptedFiles[0];
         onFileChosen(acceptedFiles[0]);
       }
     },

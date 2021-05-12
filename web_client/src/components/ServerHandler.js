@@ -1,5 +1,5 @@
 /* inner implementation */
-const server = "http://localhost:9876";
+const server = 'http://localhost:9876';
 
 const httpGETModels = async () => {
   const response = await fetch(`${server}/api/models`);
