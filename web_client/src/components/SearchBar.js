@@ -8,7 +8,7 @@ const SearchBar = ({onSearchChanged, label}) => {
       color='secondary'
       variant='filled' 
       size='small'
-      style={{backgroundColor: '#353535'}}
+      style={{backgroundColor: 'black'}}
       onChange={(event) => onSearchChanged(event.target.value)}
       label={label}
       fullWidth

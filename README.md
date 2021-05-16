@@ -1,9 +1,6 @@
-# Advanced Programming 2 - Web Client and HTTP server v1.0
+# Web Anomaly Analyzer v1.0
 
-<!-- 
-TODO: add a screenshot here!
 ![Screenshot](resources/images/screenshot.png)
--->
 
 <!-- TODO: update TOC -->
 ## Table of Contents

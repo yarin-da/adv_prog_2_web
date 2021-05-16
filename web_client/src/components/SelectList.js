@@ -11,7 +11,7 @@ import IconButton from '@material-ui/core/IconButton';
 import SearchBar from './SearchBar';
 
 const listStyle = {
-  backgroundColor: '#0a1a2a', 
+  backgroundColor: '#071727', 
   color: '#fff',
 }
 

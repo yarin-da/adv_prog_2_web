@@ -7,7 +7,7 @@ const httpGETModels = async () => {
     const json = await response.json();
     return json;
   }
-  return {};
+  return null;
 }
 
 const httpGETModel = async (model_id) => {
@@ -16,7 +16,7 @@ const httpGETModel = async (model_id) => {
     const json = await response.json();
     return json;
   }
-  return {};
+  return null;
 }
 
 const httpPOSTModel = async (model_type, data) => {
@@ -34,7 +34,7 @@ const httpPOSTModel = async (model_type, data) => {
     const json = await response.json();
     return json;
   }
-  return {};
+  return null;
 }
 
 const httpDELETEModel = async (model_id) => {
@@ -44,11 +44,7 @@ const httpDELETEModel = async (model_id) => {
           method: 'DELETE',
       }
   );
-  if (response.ok) {
-    const json = await response.json();
-    return json;
-  }
-  return {};
+  return response.ok;
 }
 
 const httpPOSTAnomalies = async (model_id, data) => {
@@ -66,13 +62,15 @@ const httpPOSTAnomalies = async (model_id, data) => {
     const json = await response.json();
     return json;
   }
-  return {};
+  return null;
 }
 
 /* data converters */
 const flightDataToServerData = (flightData) => {
   // return if there's no data
-  if (flightData == null || flightData[0] == null) { return; }
+  if (flightData == null || flightData.length <= 0 || flightData[0] == null) { 
+    return; 
+  }
   // initialize a new json object 
   const serverData = {};
   // initialize keys
@@ -83,47 +81,54 @@ const flightDataToServerData = (flightData) => {
   // initialize arrays for each key (column)
   for (let i = 0; i < flightData.length; i++) {
     columns.forEach((col) => {
-      serverData[col] = [...serverData[col], flightData[col][i]];
+      serverData[col] = [...serverData[col], flightData[i][col]];
     });
   }
   return serverData;
 }
 
 
-/* http calls wrappers */
+/* async http calls wrappers */
 const getModels = async (func) => {
   const json = await httpGETModels();
-  func(json);
+  if (json != null) {
+    func(json);
+  }
 };
 
 const getModel = async (model_id, func) => {
   const json = await httpGETModel(model_id);
-  func(json);
+  if (json != null) {
+    func(json);
+  }
 };
 
 const postModel = async (model_id, data, func) => {
   const convertedData = flightDataToServerData(data);
   const json = await httpPOSTModel(model_id, convertedData);
-  func(json);
+  if (json != null) {
+    func(json);
+  }
 };
 
-const deleteModel = async (model_id, func) => {
-  const json = await httpDELETEModel(model_id);
-  func(json);
+const deleteModel = async (model_id) => {
+  await httpDELETEModel(model_id);
 };
 
 const postAnomalies = async (model_id, data, func) => {
   const convertedData = flightDataToServerData(data);
   const json = await httpPOSTAnomalies(model_id, convertedData);
-  func(json);
+  if (json != null) {
+    func(json);
+  }
 };
 
 /* server communication interface */
-const ServerHandler = {
+const HttpRequestHandler = {
   getModels: getModels,
   getModel: getModel,
   postModel: postModel,
   deleteModel: deleteModel,
   postAnomalies: postAnomalies,
 }
-export default ServerHandler;
+export default HttpRequestHandler;

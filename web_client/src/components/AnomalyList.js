@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
 import { FixedSizeList } from 'react-window';
 import { makeStyles } from '@material-ui/core';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ErrorIcon from '@material-ui/icons/Error';
@@ -17,7 +17,7 @@ const useStyles = makeStyles({
 });
 
 const listStyle = {
-  backgroundColor: '#0a1a2a', 
+  backgroundColor: '#071727', 
   color: '#fff',
 };
 

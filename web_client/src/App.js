@@ -1,11 +1,11 @@
-import {useCallback, useState} from 'react';
+import {useEffect, useCallback, useState, useRef} from 'react';
+import HttpRequestHandler from './components/HttpRequestHandler';
 import DataTable from './components/DataTable';
-import LineChart from './components/LineChart';
 import SelectList from './components/SelectList';
 import AnomalyList from './components/AnomalyList';
-import ServerHandler from './components/ServerHandler';
-import Button from '@material-ui/core/Button';
 import CsvDropzone from './components/CsvDropzone';
+import Graph from './components/Graph';
+import Button from '@material-ui/core/Button';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core';
 
 const theme = createMuiTheme({
@@ -23,107 +23,88 @@ const theme = createMuiTheme({
       dark: '#000000',
       textPrimary: '#ffffff',
     },
-        text: {
+    text: {
       main: '#ffffff',
       primary: '#ffffff',
       secondary: '#9a9a9a',
       disabled: '#6c6c6c'
     },
   }
-})
+});
 
-/* TODO: remove demo data after server is up and running */
-const demoModels = [
-  {
-    model_id: 0,
-    upload_time: '2021-04-22T19:15:32+02.00',
-    status: 'ready',
-  },
-  {
-    model_id: 1,
-    upload_time: '2021-04-21T18:17:32+02.00',
-    status: 'pending',
-  },
-  {
-    model_id: 2,
-    upload_time: '2021-04-25T21:15:32+02.00',
-    status: 'ready',
-  },
-  {
-    model_id: 3,
-    upload_time: '2021-04-30T19:07:32+02.00',
-    status: 'pending',
-  },
-  {
-    model_id: 4,
-    upload_time: '2021-05-04T09:15:32+02.00',
-    status: 'pending',
-  },
-]
-
-const demoAnomalies = {
-  anomalies: {
-    'pitch-deg': [[0,1],[22,87],[1150,1320]],
-    'longitude-deg': [[55,200],[490,490],[1700,1950]],
-    'indicated-heading-deg': [[104,257]],
-  },
-  reason: {
-    'pitch-deg': 'airspeed-kt',
-    'longitude-deg': 'altimeter_indicated-altitude-ft',
-    'indicated-heading-deg': 'altimeter_pressure-alt-ft',
-  }
-};
-
-// main app
 const App = () => {
-  const [models, setModels] = useState(demoModels);
+  const [models, setModels] = useState([]);
   const [selectedModel, setSelectedModel] = useState(-1); // selected model id
-  
-  const [anomalies, setAnomalies] = useState(demoAnomalies);
-  const [selectedAnomalyPair, setSelectedAnomalyPair] = useState([]);
-
+  const [anomalies, setAnomalies] = useState(null);
   const [detectData, setDetectData] = useState([]); // flight data to test for anomalies
   const [trainData, setTrainData] = useState([]); // training data 
   const [modelType, setModelType] = useState('regression'); // user's desired model type
-
-  const onModelSelected = (model_id) => {
-    setSelectedModel(model_id);
-  }
-  const onAnomalyPairSelected = (pair) => {
-    setSelectedAnomalyPair(pair);
-  }
+  const [graphUpdates, setGraphUpdates] = useState(0);
+  const [selectedAnomalyPair, setSelectedAnomalyPair] = useState([]);
+  const modelsRef = useRef();
+  modelsRef.current = models;
+  
   const deleteModel = (id) => {
+    HttpRequestHandler.deleteModel(id);
     setModels(models.filter((model) => model.model_id !== id));
-  }
-  const onTrainDataChanged = (jsonData) => {
-    setTrainData(jsonData);
   };
-  const onDetectDataChanged = (jsonData) => {
-    setDetectData(jsonData);
-  };
-  const onModelTypeChanged = (type) => {
-    setModelType(type);
-  };
+  
+  const updateModels = useCallback(
+    () => {
+      function shouldUpdate(a, b) {
+        return a.length !== b.length ||
+        !a.every((val, i) => Object.keys(val).every(col => val[col] === b[i][col]));
+      }
+      HttpRequestHandler.getModels(
+        (jsonData) => {
+          if (shouldUpdate(jsonData, modelsRef.current)) {
+            setModels(oldState => jsonData);
+          } 
+        }
+      );
+    },
+    []
+  );
 
-  const sendModelToServer = useCallback(() => {
-    // make sure all the data required has been initialized
-    if (modelType === -1 || trainData === []) { return; }
-    // send request to the server
-    ServerHandler.postModel(modelType, (jsonData) => {
-      const modelResponse = jsonData;
-      console.log(`POST /api/model response: ${modelResponse}`);
-    });
-  }, [trainData, modelType]);
+  useEffect(
+    () => {
+      const updateDelay = 1000;
+      const interval = setInterval( 
+        () => updateModels(), 
+        updateDelay
+      );
+      updateModels();
+      return () => clearInterval(interval);  
+    }, 
+    [updateModels]
+  );
+  
+  useEffect(
+    () => {
+      // make sure all the data required has been initialized
+      if (trainData == null || trainData.length <= 0) { return; }
+      // send request to the server
+      HttpRequestHandler.postModel(modelType, trainData, (jsonData) => {
+        setTrainData([]);
+      });
+    }, 
+    [trainData, modelType]
+  );
 
-  const getAnomaliesFromServer = useCallback(() => {
+  useEffect(() => {
     // make sure all the data required has been initialized
-    if (selectedModel === -1 || detectData === []) { return; }
+    if (selectedModel < 0 || detectData.length <= 0) { return; }
+    const model = models.find((model) => model.model_id === selectedModel);
+    if (model == null || model.status !== 'ready') { return; }
     // send request to the server
-    ServerHandler.postAnomalies(selectedModel, detectData, (jsonData) => {
-      const anomaliesResponse = jsonData;
-      console.log(`POST /api/anomaly response: ${anomaliesResponse}`);
+    HttpRequestHandler.postAnomalies(selectedModel, detectData, (jsonData) => {
+      setAnomalies(jsonData);
     });
-  }, [detectData, selectedModel]);
+  }, [detectData, selectedModel, models]);
+
+  useEffect(() => {
+    setGraphUpdates(updates => updates + 1);
+  }, [anomalies, selectedAnomalyPair]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -133,10 +114,10 @@ const App = () => {
             <AnomalyList 
               anomalies={anomalies}
               selectedAnomalyPair={selectedAnomalyPair}
-              onAnomalyPairSelected={onAnomalyPairSelected} 
+              onAnomalyPairSelected={setSelectedAnomalyPair} 
             />
             <CsvDropzone 
-              onDataChanged={onDetectDataChanged}
+              onDataChanged={setDetectData}
               text='Drop a flight data file' 
             />
           </div>
@@ -144,17 +125,19 @@ const App = () => {
             <SelectList 
               models={models}
               selectedModel={selectedModel}
-              onModelSelected={onModelSelected}
-              onDeleteItem={deleteModel} />
+              onModelSelected={setSelectedModel}
+              onDeleteItem={deleteModel}
+            />
             <CsvDropzone 
-              onDataChanged={onTrainDataChanged}
-              text='Drop a training data file' />
+              onDataChanged={setTrainData}
+              text='Drop a training data file'
+            />
             <div style={{margin: 2}}>
               <Button
                 fullWidth
                 color='secondary'
                 variant={modelType === 'regression' ? 'contained' : 'outlined'}
-                onClick={() => onModelTypeChanged('regression')}
+                onClick={() => setModelType('regression')}
               >
                 Regression
               </Button>
@@ -162,7 +145,7 @@ const App = () => {
                 fullWidth
                 color='secondary'
                 variant={modelType === 'hybrid' ? 'contained' : 'outlined'}
-                onClick={() => onModelTypeChanged('hybrid')}
+                onClick={() => setModelType('hybrid')}
               >
                 Hybrid
               </Button>
@@ -170,20 +153,25 @@ const App = () => {
           </div>
         </div>
         <div className='DataPanel'>
-          <LineChart 
-            data={detectData} 
-            anomalyPair={selectedAnomalyPair}
-            anomalies={anomalies} 
-          />
-          <DataTable 
-            data={detectData}
-            anomalyPair={selectedAnomalyPair}
-            anomalies={anomalies} 
-          />
+          {detectData != null && detectData.length > 0 &&
+            <>
+              <Graph 
+                data={detectData} 
+                anomalyPair={selectedAnomalyPair}
+                anomalies={anomalies} 
+                graphUpdates={graphUpdates}
+              />
+              <DataTable 
+                data={detectData}
+                anomalyPair={selectedAnomalyPair}
+                anomalies={anomalies} 
+              />
+            </>
+          }
           </div>
       </div>
     </ThemeProvider>
   );
-}
+};
 
 export default App;

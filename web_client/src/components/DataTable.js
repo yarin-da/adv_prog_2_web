@@ -1,11 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { DataGrid } from '@material-ui/data-grid';
 import { makeStyles, darken, lighten } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => {
   return {
     root: {
-      borderColor: 'white',
+      borderColor: '#6c6c6c',
       '& .MuiDataGrid-cell:focus-within': {
         outline: 'none',
       },
@@ -27,7 +27,10 @@ const useStyles = makeStyles((theme) => {
 // a data table for all the values in 'data'
 const DataTable = ({data, anomalies, anomalyPair}) => {
   // update columns and rows whenever 'data' updates
-  const rows = useMemo(() => data, [data]);
+  const rows = useMemo(
+    () => data.map((line, index) => { return {id: index, ...line}; }), 
+    [data]
+  );
   const columns = useMemo(
     () => {
       // make sure there's data
@@ -48,7 +51,7 @@ const DataTable = ({data, anomalies, anomalyPair}) => {
   );
   
   const [anomalyLines, setAnomalyLines] = useState(new Set());
-  const updateAnomalyLines = useMemo(
+  useEffect(
     () => {
       if (anomalies == null) { return; }
       const lines = new Set();
@@ -74,7 +77,7 @@ const DataTable = ({data, anomalies, anomalyPair}) => {
 
   const classes = useStyles();
   return (
-    <div style={{padding: 5}}>
+    <div style={{padding: 10}}>
       <DataGrid 
         rows={rows} 
         columns={columns}
@@ -83,7 +86,7 @@ const DataTable = ({data, anomalies, anomalyPair}) => {
         disableColumnMenu={true}
         getRowClassName={
           (params) => {
-            const rowID = params.getValue('id');
+            const rowID = params.row.id;
             const exists = anomalyLines.has(rowID);
             return exists ? 'anomalyRow' : 'regularRow';
           }

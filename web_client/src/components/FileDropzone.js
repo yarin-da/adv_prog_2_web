@@ -14,7 +14,7 @@ const baseStyle = {
   backgroundColor: '#acacac',
   color: '#555555',
   outline: 'none',
-  transition: 'border .24s ease-in-out'
+  transition: 'border .24s ease-in-out',
 };
 
 const activeStyle = {
@@ -39,17 +39,7 @@ const FileDropzone = ({text, type, onFileChosen}) => {
     isDragActive,
     isDragAccept,
     isDragReject,
-    acceptedFiles,
-  } = useDropzone({accept: type, maxFiles: 1});
-
-  const onFileUpload = useMemo(
-    () => {
-      if (acceptedFiles.length > 0) {
-        onFileChosen(acceptedFiles[0]);
-      }
-    },
-    [acceptedFiles],
-  );
+  } = useDropzone({accept: type, maxFiles: 1, onDrop: onFileChosen});
 
   const style = useMemo(() => ({
     ...baseStyle,
@@ -63,7 +53,7 @@ const FileDropzone = ({text, type, onFileChosen}) => {
   ]);
 
   return (
-    <div style={{margin: 3}}>
+    <div className="Unselectable" style={{margin: 3}}>
       <div {...getRootProps({style})}>
         <input {...getInputProps()} />
         <Typography
