@@ -16,16 +16,20 @@
 
 # 1. Introduction
 
-The project is made of two components: 
-* RESTful HTTP server. The server is able to analyze flight data and find anomalies. It also provides a simple easy-to-use interface for clients using REST-style requests.
-* Web client with intuitive design and beautiful UI. <!-- TODO -->
+This project consists of a server and a web client. The project allows the user to detect and observe the anomalies in their data.
 
 ## This Version includes
 
 * Node.js Express RESTful HTTP server:
-  * 
+  * Exposes a simple API for clients using REST-style requests.
+  * Reads and caches the client's training data and live data.
+  * Analyzes the data and provides a list of anomalies.
+  * Able to service multiple clients simultaneously. 
 * React web client:
-  * 
+  * Easy-to-use UI (buttons and file dropzones).
+  * Communication with the anomaly analysis server.
+  * Conversion of raw json data into beautiful graphs.
+  * Data table that displays the relevant data and highlights rows that contain an anomaly.
 
 ***
 
@@ -39,20 +43,33 @@ In order to increase backward compatibility:
 
 # 3. User Guide
 
-## 3.1. How To Use
+## 3.1. Setup
 
 * Clone the repo
-```bash
-git clone https://github.com/yarin-da/adv_prog_2_web.git
-```
+  ```bash
+  git clone https://github.com/yarin-da/adv_prog_2_web.git
+  ```
 
 * Go to the `http_server` folder 
 
-* Use Node.js to run the server
-<!-- TODO -->
-```bash
-node http_server.js
-```
+* Open the terminal and run the server
+  ```bash
+  node http_server.js
+  ```
+
+* The server is now up and running.
+  * If the server and client are running on the same machine: you may type `localhost:9876` into your browser.
+  * otherwise, changed `localhost` to your server's IP address.
+
+## 3.2. User Guide
+
+* Upload a training data file using the file dropzone in the bottom-left corner.
+
+* Select your desired model in the lower list (Model List).
+
+* Upload a flight data file (i.e. data to analyze) using the file dropzone at the top-left.
+
+* Click on an anomaly (if there is any) in the higher list (Anomaly List).
 
 # 4. Diagrams
 <!-- TODO -->

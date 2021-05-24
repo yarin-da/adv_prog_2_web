@@ -1,7 +1,7 @@
 import {useEffect, useCallback, useState, useRef} from 'react';
 import HttpRequestHandler from './components/HttpRequestHandler';
 import DataTable from './components/DataTable';
-import SelectList from './components/SelectList';
+import ModelList from './components/ModelList';
 import AnomalyList from './components/AnomalyList';
 import CsvDropzone from './components/CsvDropzone';
 import Graph from './components/Graph';
@@ -34,7 +34,7 @@ const theme = createMuiTheme({
 
 const App = () => {
   const [models, setModels] = useState([]);
-  const [selectedModel, setSelectedModel] = useState(-1); // selected model id
+  const [selectedModel, setSelectedModel] = useState(null); // selected model id
   const [anomalies, setAnomalies] = useState(null);
   const [detectData, setDetectData] = useState([]); // flight data to test for anomalies
   const [trainData, setTrainData] = useState([]); // training data 
@@ -91,16 +91,29 @@ const App = () => {
     [trainData, modelType]
   );
 
+  useEffect(
+    () => {
+      if (selectedModel == null) { return; }
+      const model = models.find(
+        model => model.model_id === selectedModel.model_id
+      );
+      if (model == null) {
+        setSelectedModel(null);
+      }
+    },
+    [models]
+  );
+
   useEffect(() => {
     // make sure all the data required has been initialized
-    if (selectedModel < 0 || detectData.length <= 0) { return; }
-    const model = models.find((model) => model.model_id === selectedModel);
-    if (model == null || model.status !== 'ready') { return; }
+    if (detectData.length <= 0 || selectedModel == null || selectedModel.status !== 'ready') { 
+      return; 
+    }
     // send request to the server
-    HttpRequestHandler.postAnomalies(selectedModel, detectData, (jsonData) => {
+    HttpRequestHandler.postAnomalies(selectedModel.model_id, detectData, (jsonData) => {
       setAnomalies(jsonData);
     });
-  }, [detectData, selectedModel, models]);
+  }, [detectData, selectedModel]);
 
   useEffect(() => {
     setGraphUpdates(updates => updates + 1);
@@ -122,7 +135,7 @@ const App = () => {
             />
           </div>
           <div style={{margin: 10, border: 'solid 2px #324053', borderRadius: 4}}>
-            <SelectList 
+            <ModelList 
               models={models}
               selectedModel={selectedModel}
               onModelSelected={setSelectedModel}
@@ -153,22 +166,20 @@ const App = () => {
           </div>
         </div>
         <div className='DataPanel'>
-          {detectData != null && detectData.length > 0 &&
-            <>
-              <Graph 
-                data={detectData} 
-                anomalyPair={selectedAnomalyPair}
-                anomalies={anomalies} 
-                graphUpdates={graphUpdates}
-              />
-              <DataTable 
-                data={detectData}
-                anomalyPair={selectedAnomalyPair}
-                anomalies={anomalies} 
-              />
-            </>
-          }
-          </div>
+          <>
+            <Graph 
+              data={detectData} 
+              anomalyPair={selectedAnomalyPair}
+              anomalies={anomalies} 
+              graphUpdates={graphUpdates}
+            />
+            <DataTable 
+              data={detectData}
+              anomalyPair={selectedAnomalyPair}
+              anomalies={anomalies} 
+            />
+          </> 
+        </div>
       </div>
     </ThemeProvider>
   );

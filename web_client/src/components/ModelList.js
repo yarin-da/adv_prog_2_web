@@ -35,16 +35,21 @@ const SelectList = ({models, selectedModel, onModelSelected, onDeleteItem}) => {
     return {date: splitTime[0], hour: splitTime[1].split('+')[0]};
   };
 
+  const getTitle = (id) => {
+    const type = (id % 2 === 0) ? 'Linear' : 'Hybrid';
+    return `${type} ${id}`;
+  }
+
   const renderRow = ({index, style}) => {
     const model = list[index];
-    const isSelected = selectedModel === model.model_id;
+    const isSelected = (selectedModel != null && selectedModel.model_id === model.model_id);
     const {date, hour} = parseTime(model.upload_time);
     return (
       <>
         <ListItem 
             button 
             selected={isSelected}
-            onClick={(event) => onModelSelected(model.model_id)}
+            onClick={(event) => onModelSelected(model)}
             style={style} 
             key={index}>
           <ListItemIcon>
@@ -55,7 +60,7 @@ const SelectList = ({models, selectedModel, onModelSelected, onDeleteItem}) => {
             }
           </ListItemIcon>
           <ListItemText 
-            primary={'Model ID: ' + model.model_id} 
+            primary={getTitle(model.model_id)} 
             secondary={`${date} ${hour}`} />
           <IconButton
             onClick={() => onDeleteItem(model.model_id)}>
