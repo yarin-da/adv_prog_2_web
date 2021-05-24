@@ -1,6 +1,10 @@
 /* inner implementation */
 const server = 'http://localhost:9876';
 
+// wrap each http request with an async function
+// return the server's json response (if exists)
+// return null if there was an error
+
 const httpGETModels = async () => {
   const response = await fetch(`${server}/api/models`);
   if (response.ok) {

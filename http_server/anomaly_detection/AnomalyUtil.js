@@ -62,6 +62,7 @@ class AnomalyUtil {
   }
 
   minCircle(points) {
+    // call the imported findMinCircle function
     return findMinCircle(points);
   }
 }

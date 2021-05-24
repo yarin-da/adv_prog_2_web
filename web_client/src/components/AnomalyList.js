@@ -8,6 +8,7 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ErrorIcon from '@material-ui/icons/Error';
 import SearchBar from './SearchBar';
 
+// override default font size
 const useStyles = makeStyles({
   item: {
     '& span, & svg': {
@@ -16,6 +17,7 @@ const useStyles = makeStyles({
   },
 });
 
+// set list colors
 const listStyle = {
   backgroundColor: '#071727', 
   color: '#fff',
@@ -27,10 +29,13 @@ const AnomalyList = ({anomalies, selectedAnomalyPair, onAnomalyPairSelected}) =>
   const onSearchChanged = (search) => {
     setSearch(search);
   }
+
+  // create the list of entries and cache it
   const list = useMemo(
     () => {
       if (anomalies == null) { return []; }
       const reasons = Object.keys(anomalies.reason);
+      // filter by search
       const filtered = reasons.filter((feature) => {
         const str = `${feature} - ${anomalies.reason[feature]}`;
         return !search || str.includes(search);
@@ -47,12 +52,14 @@ const AnomalyList = ({anomalies, selectedAnomalyPair, onAnomalyPairSelected}) =>
 
   const onItemClicked = (feature1, feature2) => {
     if (isItemSelected(feature1)) {
+      // if the entry is already selected - unselect it!
       onAnomalyPairSelected([]);
     } else {
       onAnomalyPairSelected([feature1, feature2]);
     }
   };
 
+  // draw an entry in the list
   const renderRow = ({index}) => {
     const feature1 = list[index];
     const feature2 = anomalies.reason[feature1];
@@ -79,6 +86,7 @@ const AnomalyList = ({anomalies, selectedAnomalyPair, onAnomalyPairSelected}) =>
     );
   };
 
+  // draw the list
   return (
     <div>
       <SearchBar 

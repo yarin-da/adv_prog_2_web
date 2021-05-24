@@ -1,9 +1,3 @@
-function dist(a, b) {
-  const xDiff = a.x - b.x;
-  const yDiff = a.y - b.y;
-  return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
-}
-
 function Point(x, y) {
   return {x: x, y: y};
 }
@@ -12,9 +6,17 @@ function Circle(center, radius) {
   return { center: center, radius: radius };
 }
 
+function dist(a, b) {
+  const xDiff = a.x - b.x;
+  const yDiff = a.y - b.y;
+  return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+}
+
 function from2points(a, b) {
+	// the center is the middle point between a and b
   const x = (a.x + b.x) / 2;
   const y = (a.y + b.y) / 2;
+	// the radius is the distance between a and b
   const r = dist(a, b) / 2;
   return Circle(Point(x, y), r);
 }
@@ -64,6 +66,7 @@ function from3points(a, b, c) {
 }
 
 function trivial(P) {
+	// if P contains less than 3 points
   if (P.length === 0) {
     return Circle(Point(0, 0), 0);
   } else if (P.length === 1) {
@@ -72,6 +75,7 @@ function trivial(P) {
     return from2points(P[0], P[1]);
   }
 
+	// otherwise, consider every possible circle from 2 pair of points
   let c = from2points(P[0], P[1]);
   if (dist(P[2], c.center) <= c.radius) {
 		return c;
@@ -92,6 +96,7 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
+// an implementation of welzl based on the wiki page
 function welzl(P, R, n) {
   if (n <= 0 || R.length >= 3) {
     return trivial(R);
@@ -110,8 +115,10 @@ function welzl(P, R, n) {
   return welzl(P, [...R, p], n - 1);
 }
 
+// a wrapper for welzl
 function findMinCircle(points) {
-  return welzl(points, [], points.length);
+	const circle = welzl(points, [], points.length);
+  return {x: circle.center.x, y: circle.center.y, r: radius};
 }
 
 module.exports = findMinCircle;

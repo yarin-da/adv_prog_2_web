@@ -25,6 +25,7 @@ const SearchBar = ({onSearchChanged, label}) => {
   );
 }
 
+// by default - do nothing when search text is changed
 SearchBar.defaultProps = {
   label: 'Search',
   onSearchChanged: (e) => {},

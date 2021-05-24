@@ -1,36 +1,6 @@
-import {useEffect, useCallback, useState, useRef} from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import HttpRequestHandler from './components/HttpRequestHandler';
-import DataTable from './components/DataTable';
-import ModelList from './components/ModelList';
-import AnomalyList from './components/AnomalyList';
-import CsvDropzone from './components/CsvDropzone';
-import Graph from './components/Graph';
-import Button from '@material-ui/core/Button';
-import { ThemeProvider, createMuiTheme } from '@material-ui/core';
-
-const theme = createMuiTheme({
-  palette: {
-    type: 'dark',
-    secondary: {
-      light: '#4fb3bf',
-      main: '#00838f',
-      dark: '#005662',
-      textPrimary: '#ffffff',
-    },
-    primary: {
-      light: '#324053',
-      main: '#0a1a2a',
-      dark: '#000000',
-      textPrimary: '#ffffff',
-    },
-    text: {
-      main: '#ffffff',
-      primary: '#ffffff',
-      secondary: '#9a9a9a',
-      disabled: '#6c6c6c'
-    },
-  }
-});
+import MainPage from './components/MainPage';
 
 const App = () => {
   const [models, setModels] = useState([]);
@@ -41,20 +11,26 @@ const App = () => {
   const [modelType, setModelType] = useState('regression'); // user's desired model type
   const [graphUpdates, setGraphUpdates] = useState(0);
   const [selectedAnomalyPair, setSelectedAnomalyPair] = useState([]);
+  // used to avoid dependency on models state
   const modelsRef = useRef();
   modelsRef.current = models;
   
   const deleteModel = (id) => {
+    // delete on server side
     HttpRequestHandler.deleteModel(id);
+    // delete on client side for immediate feedback
     setModels(models.filter((model) => model.model_id !== id));
   };
   
   const updateModels = useCallback(
     () => {
+      // a predicate
       function shouldUpdate(a, b) {
         return a.length !== b.length ||
         !a.every((val, i) => Object.keys(val).every(col => val[col] === b[i][col]));
       }
+      // request all models from the server
+      // update only when necessary
       HttpRequestHandler.getModels(
         (jsonData) => {
           if (shouldUpdate(jsonData, modelsRef.current)) {
@@ -66,6 +42,7 @@ const App = () => {
     []
   );
 
+  // set a timer to update models every second
   useEffect(
     () => {
       const updateDelay = 1000;
@@ -79,6 +56,7 @@ const App = () => {
     [updateModels]
   );
   
+  // send a new model to the server
   useEffect(
     () => {
       // make sure all the data required has been initialized
@@ -91,6 +69,7 @@ const App = () => {
     [trainData, modelType]
   );
 
+  // unselect a model if it has been deleted
   useEffect(
     () => {
       if (selectedModel == null) { return; }
@@ -101,9 +80,10 @@ const App = () => {
         setSelectedModel(null);
       }
     },
-    [models]
+    [models, selectedModel]
   );
 
+  // get anomalies from the server
   useEffect(() => {
     // make sure all the data required has been initialized
     if (detectData.length <= 0 || selectedModel == null || selectedModel.status !== 'ready') { 
@@ -115,73 +95,27 @@ const App = () => {
     });
   }, [detectData, selectedModel]);
 
+  // change graphUpdates to re-render the graph
   useEffect(() => {
     setGraphUpdates(updates => updates + 1);
   }, [anomalies, selectedAnomalyPair]);
 
   return (
-    <ThemeProvider theme={theme}>
-      <div className='MainPage'>
-        <div>
-          <div style={{margin: 10, border: 'solid 2px #324053', borderRadius: 4}}>
-            <AnomalyList 
-              anomalies={anomalies}
-              selectedAnomalyPair={selectedAnomalyPair}
-              onAnomalyPairSelected={setSelectedAnomalyPair} 
-            />
-            <CsvDropzone 
-              onDataChanged={setDetectData}
-              text='Drop a flight data file' 
-            />
-          </div>
-          <div style={{margin: 10, border: 'solid 2px #324053', borderRadius: 4}}>
-            <ModelList 
-              models={models}
-              selectedModel={selectedModel}
-              onModelSelected={setSelectedModel}
-              onDeleteItem={deleteModel}
-            />
-            <CsvDropzone 
-              onDataChanged={setTrainData}
-              text='Drop a training data file'
-            />
-            <div style={{margin: 2}}>
-              <Button
-                fullWidth
-                color='secondary'
-                variant={modelType === 'regression' ? 'contained' : 'outlined'}
-                onClick={() => setModelType('regression')}
-              >
-                Regression
-              </Button>
-              <Button
-                fullWidth
-                color='secondary'
-                variant={modelType === 'hybrid' ? 'contained' : 'outlined'}
-                onClick={() => setModelType('hybrid')}
-              >
-                Hybrid
-              </Button>
-            </div>
-          </div>
-        </div>
-        <div className='DataPanel'>
-          <>
-            <Graph 
-              data={detectData} 
-              anomalyPair={selectedAnomalyPair}
-              anomalies={anomalies} 
-              graphUpdates={graphUpdates}
-            />
-            <DataTable 
-              data={detectData}
-              anomalyPair={selectedAnomalyPair}
-              anomalies={anomalies} 
-            />
-          </> 
-        </div>
-      </div>
-    </ThemeProvider>
+    <MainPage 
+      models={models}
+      selectedModel={selectedModel}
+      setSelectedModel={setSelectedModel}
+      anomalies={anomalies}
+      detectData={detectData}
+      setDetectData={setDetectData}
+      setTrainData={setTrainData}
+      modelType={modelType}
+      setModelType={setModelType}
+      graphUpdates={graphUpdates}
+      selectedAnomalyPair={selectedAnomalyPair}
+      setSelectedAnomalyPair={setSelectedAnomalyPair}
+      deleteModel={deleteModel}
+    />
   );
 };
 

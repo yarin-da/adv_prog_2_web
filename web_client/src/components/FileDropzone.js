@@ -17,6 +17,7 @@ const baseStyle = {
   transition: 'border .24s ease-in-out',
 };
 
+// change styles based on drag status
 const activeStyle = {
   backgroundColor: 'lightgray',
   color: 'black',
@@ -52,6 +53,7 @@ const FileDropzone = ({text, type, onFileChosen}) => {
     isDragAccept
   ]);
 
+  // draw the dropzone - make text unselectable
   return (
     <div className="Unselectable" style={{margin: 3}}>
       <div {...getRootProps({style})}>

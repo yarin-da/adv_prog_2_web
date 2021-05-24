@@ -1,12 +1,12 @@
-import {useState} from 'react';
 import DataTable from './DataTable';
-import LineChart from './LineChart';
-import SelectList from './SelectList';
+import ModelList from './ModelList';
 import AnomalyList from './AnomalyList';
-import Button from '@material-ui/core/Button';
 import CsvDropzone from './CsvDropzone';
+import Graph from './Graph';
+import Button from '@material-ui/core/Button';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core';
 
+// override default colors
 const theme = createMuiTheme({
   palette: {
     type: 'dark',
@@ -31,20 +31,20 @@ const theme = createMuiTheme({
   }
 });
 
-const MainPage = (props) => {
-  const {
-    models, modelType, 
-    detectData, trainData, 
-    anomalies,
-    selectedModel,
-    setModels, setModelType,
-    setDetectData, setTrainData,
-    setSelectedModel,
-    deleteModel,
-  } = props;
-
-  const [selectedAnomalyPair, setSelectedAnomalyPair] = useState([]);
-
+// grab all states from the main component via props
+const MainPage = ({
+  models,
+  selectedModel, setSelectedModel,
+  anomalies,
+  detectData, setDetectData,
+  setTrainData,
+  modelType, setModelType,
+  graphUpdates,
+  selectedAnomalyPair, setSelectedAnomalyPair,
+  deleteModel,
+}) => {
+  
+  // draw the whole main page
   return (
     <ThemeProvider theme={theme}>
       <div className='MainPage'>
@@ -61,14 +61,16 @@ const MainPage = (props) => {
             />
           </div>
           <div style={{margin: 10, border: 'solid 2px #324053', borderRadius: 4}}>
-            <SelectList 
+            <ModelList 
               models={models}
               selectedModel={selectedModel}
               onModelSelected={setSelectedModel}
-              onDeleteItem={deleteModel} />
+              onDeleteItem={deleteModel}
+            />
             <CsvDropzone 
               onDataChanged={setTrainData}
-              text='Drop a training data file' />
+              text='Drop a training data file'
+            />
             <div style={{margin: 2}}>
               <Button
                 fullWidth
@@ -90,21 +92,20 @@ const MainPage = (props) => {
           </div>
         </div>
         <div className='DataPanel'>
-          {detectData != null && detectData.length > 0 &&
-            <>
-              <LineChart 
-                data={detectData} 
-                anomalyPair={selectedAnomalyPair}
-                anomalies={anomalies} 
-              />
-              <DataTable 
-                data={detectData}
-                anomalyPair={selectedAnomalyPair}
-                anomalies={anomalies} 
-              />
-            </>
-          }
-          </div>
+          <>
+            <Graph 
+              data={detectData} 
+              anomalyPair={selectedAnomalyPair}
+              anomalies={anomalies} 
+              graphUpdates={graphUpdates}
+            />
+            <DataTable 
+              data={detectData}
+              anomalyPair={selectedAnomalyPair}
+              anomalies={anomalies} 
+            />
+          </> 
+        </div>
       </div>
     </ThemeProvider>
   );

@@ -20,10 +20,13 @@ const SelectList = ({models, selectedModel, onModelSelected, onDeleteItem}) => {
   const onSearchChanged = (search) => {
     setSearch(search);
   }
+
+  // update and cache the model list entries
   const list = useMemo(() => {
     if (!search) {
       return models;
     }
+    // filter list by search
     const filtered = models.filter((model) => {
       return `id=${model.model_id} ${model.upload_time} ${model.status}`.includes(search);
     });
@@ -53,7 +56,7 @@ const SelectList = ({models, selectedModel, onModelSelected, onDeleteItem}) => {
             style={style} 
             key={index}>
           <ListItemIcon>
-            {
+            { // model status icon
               model.status === 'pending' ?
               <HourglassEmptyIcon />
               : <CheckCircleIcon style={{color: 'lightgreen'}} />

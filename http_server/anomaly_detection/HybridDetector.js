@@ -1,26 +1,25 @@
 const SimpleDetector = require('./SimpleDetector');
 
 class HybridDetector extends SimpleDetector {
-  constructor(data, correlation_threshold, correlatedPairs) {
-    super(data, correlation_threshold, correlatedPairs);
-    this.line_threshold = 0.9;
+  constructor(data, correlationThreshold, correlatedPairs) {
+    super(data, correlationThreshold, correlatedPairs);
+    this.lineThreshold = 0.9;
   }
 
   createCorrelatedPair(feature1, feature2, correlation) {
-    if (Math.abs(correlation) < this.line_threshold) {
+    // return a correlated pair based on correlation
+    if (Math.abs(correlation) < this.lineThreshold) {
       return this.createCircleStructurePair(feature1, feature2, correlation)
     }
     return super.createCorrelatedPair(feature1, feature2, correlation);
   }
 
   createCircleStructurePair(feature1, feature2, correlation) {
-    let points = [];
-    for (let i = 0; i < this.data[feature1].length; i++) {
-      const x = parseFloat(this.data[feature1][i]);
-      const y = parseFloat(this.data[feature2][i]);
-      points = [...points, {x: x, y: y}];
-    }
+    const points = super.createPointArray(feature1, feature2);
+    
+    // get the smallest enclosing circle of these points
     const circle = this.util.minCircle(points);
+
     const pair = {
       feature1: feature1,
       feature2: feature2,
@@ -33,12 +32,15 @@ class HybridDetector extends SimpleDetector {
   }
 
   isAnomaly(pair, point) {
-    if (pair.correlation < this.line_threshold) {
+    // if we're working with a circle (based on correlation)
+    if (pair.correlation < this.lineThreshold) {
       const x = pair.x;
       const y = pair.y;
       const r = pair.threshold;
       return x * x + y * y > r * r;
     }
+    // otherwise, we're working with linear regression
+    // use the parent class to determine anomalies
     return super.isAnomaly(pair, point);
   }
 

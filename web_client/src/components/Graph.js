@@ -33,6 +33,7 @@ const chartOptions = {
   },
 };
 
+// default linechart colors
 const colors = [
   {r: 0, g: 150, b: 190},
   {r: 110, g: 85,  b: 150},
@@ -51,6 +52,7 @@ class Graph extends React.Component {
     return data == null || data[0] == null || anomalies == null;
   }
 
+  // figure out if ctx is inside an anomaly segment
   isAnomaly(anomalies, feature, skip, ctx) {
     const spans = anomalies.anomalies[feature];
     if (spans == null) {
@@ -67,6 +69,8 @@ class Graph extends React.Component {
     return false;
   };
 
+  // re-render the graph only when graphUpdates has been changed
+  // this is a way to avoid unnecessary re-renders
   shouldComponentUpdate(nextProps, nextState) {
     const oldUpdates = this.props.graphUpdates;
     const newUpdates = nextProps.graphUpdates;
@@ -93,14 +97,16 @@ class Graph extends React.Component {
     // use filter to skip some of the values
     // and map to grab the relevant value from each row
     const keys = Object.keys(data[0]);
-    const datasets = keys
+    const filtered = keys
     .filter((col, i) => {
       const maxColsToDisplay = 5;
       return anomalyPair.length > 0 ? anomalyPair.includes(col)
         : 0 < i && i <= Math.min(keys.length - 1, maxColsToDisplay);
-    })
-    .map((header, index) => {
+    });
+    const datasets = filtered.map((header, index) => {
       const color = this.getColor(index);
+      // filter some of the rows by skip
+      // and get the relevant column values
       const yValues = data
         .filter((row, i) => i % skip === 0)
         .map(row => row[header]);
@@ -110,6 +116,7 @@ class Graph extends React.Component {
         borderColor: color,
         radius: 0,
         pointHitRadius: 15,
+        // mark an anomaly segment as red
         segment: {
           borderColor: (ctx) => {
             const anomalyColor = 'rgb(200, 70, 70)';
